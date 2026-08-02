@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Mata_PelajaranResourceCollection;
 use App\Models\mata_pelajaran;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,8 +17,13 @@ class MataPelajaranController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->filled('perPage');
+        $search = $request->filled('search');
 
-        return mata_pelajaran::paginate($perPage ? $request->perPage : 10)->toResourceCollection();
+        if ($search) {
+            return new Mata_PelajaranResourceCollection(mata_pelajaran::search($request->search)->paginate($perPage ? $request->perPage : 10));
+        }
+
+        return new Mata_PelajaranResourceCollection(mata_pelajaran::paginate($perPage ? $request->perPage : 10));
     }
 
     /**
@@ -27,15 +33,23 @@ class MataPelajaranController extends Controller
     {
         Gate::authorize('admin', User::class);
 
-        $data = $request->validate([
-            'nama' => ['required', 'string', 'min:5', 'max:100'],
-            'kode' => ['required', 'string', 'min:5', 'max:10', Rule::unique('mata_pelajarans', 'kode')],
-        ]);
+        $data = $request->validate(
+            [
+                'nama' => ['required', 'string', 'min:5', 'max:50'],
+                'kode' => ['required', 'string', 'min:1', 'max:5', Rule::unique('mata_pelajarans', 'kode')],
+            ],
+            [
+                'nama.required' => 'nama tidak boleh kosong!.',
+                'nama.min' => 'nama minimal 5 karakter!.',
+                'nama.max' => 'nama maksimal 50 karakter!.',
+                'kode.required' => 'kode tidak boleh kosong!.',
+                'kode.min' => 'kode minimal 1 karakter!.',
+                'kode.max' => 'kode maksimal 5 karakter!.',
+                'kode.unique' => 'kode sudah digunakan, kode harus unik!.',
+            ]
+        );
 
-        $result = mata_pelajaran::create($data);
-        $success = mata_pelajaran::save();
-
-        return ['success' => $success, 'created' => $result];
+        return ['success' => true, 'created' => mata_pelajaran::create($data)];
     }
 
     /**
@@ -53,10 +67,19 @@ class MataPelajaranController extends Controller
     {
         Gate::authorize('admin', User::class);
 
-        $data = $request->validate([
-            'nama' => ['string', 'min:5', 'max:100'],
-            'kode' => ['string', 'min:5', 'max:10', Rule::unique('mata_pelajarans', 'kode')],
-        ]);
+        $data = $request->validate(
+            [
+                'nama' => ['string', 'min:5', 'max:50'],
+                'kode' => ['string', 'min:1', 'max:5', Rule::unique('mata_pelajarans', 'kode')],
+            ],
+            [
+                'nama.min' => 'nama minimal 5 karakter!.',
+                'nama.max' => 'nama maksimal 50 karakter!.',
+                'kode.min' => 'kode minimal 1 karakter!.',
+                'kode.max' => 'kode maksimal 5 karakter!.',
+                'kode.unique' => 'kode sudah digunakan, kode harus unik!.',
+            ]
+        );
 
         $success = $mapel->update($data);
 

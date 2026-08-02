@@ -35,12 +35,27 @@ class UserController extends Controller
     {
         Gate::authorize('admin', $user);
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'min:5', 'max:50'],
-            'role' => ['required', 'in:admin,user'],
-            'email' => ['required', 'string', 'min:10', 'max:50', 'email', Rule::unique('users', 'email')],
-            'password' => ['required', Password::min(8)->mixedCase()->numbers()],
-        ]);
+        $data = $request->validate(
+            [
+                'name' => ['required', 'string', 'min:5', 'max:50'],
+                'role' => ['required', 'in:admin,user'],
+                'email' => ['required', 'string', 'min:10', 'max:50', 'email', Rule::unique('users', 'email')],
+                'password' => ['required', Password::min(8)->mixedCase()->numbers()],
+            ],
+            [
+                'nama.required' => 'nama tidak boleh kosong!.',
+                'nama.min' => 'nama minimal 5 karakter!.',
+                'nama.max' => 'nama maksimal 50 karakter!.',
+                'role.required' => 'role tidak boleh kosong!.',
+                'role.in' => 'role input salah!, isi dengan admin/user.',
+                'email.required' => 'email tidak boleh kosong!',
+                'email.email' => 'format email yang anda masukan salah!',
+                'email.min' => 'email minimal 10 karakter!',
+                'email.max' => 'email maksimal 50 karakter!',
+                'email.unique' => 'email sudah pernah dipakai!.',
+                'password.required' => 'password tidak boleh kosong',
+            ]
+        );
 
         return ['success' => true, 'created' => $user->create($data)];
     }
@@ -64,11 +79,27 @@ class UserController extends Controller
     {
         Gate::authorize('admin', $user);
 
-        $data = $request->validate([
-            'name' => ['string', 'min:5', 'max:50'],
-            'email' => ['string', 'min:10', 'max:50', 'email', Rule::unique('users', 'email')->ignore($user->id)],
-            'password' => [Password::min(8)->mixedCase()->numbers()],
-        ]);
+        $data = $request->validate(
+            [
+                'name' => ['required', 'string', 'min:5', 'max:50'],
+                'role' => ['required', 'in:admin,user'],
+                'email' => ['required', 'string', 'min:10', 'max:50', 'email', Rule::unique('users', 'email')->ignore($user->id)],
+                'password' => ['required', Password::min(8)->mixedCase()->numbers()],
+            ],
+            [
+                'nama.required' => 'nama tidak boleh kosong!.',
+                'nama.min' => 'nama minimal 5 karakter!.',
+                'nama.max' => 'nama maksimal 50 karakter!.',
+                'role.required' => 'role tidak boleh kosong!.',
+                'role.in' => 'role input salah!, isi dengan admin/user.',
+                'email.required' => 'email tidak boleh kosong!',
+                'email.email' => 'format email yang anda masukan salah!',
+                'email.min' => 'email minimal 10 karakter!',
+                'email.max' => 'email maksimal 50 karakter!',
+                'email.unique' => 'email sudah pernah dipakai!.',
+                'password.required' => 'password tidak boleh kosong',
+            ]
+        );
 
         $success = $user->update($data);
 

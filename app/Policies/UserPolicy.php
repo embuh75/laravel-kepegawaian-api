@@ -12,6 +12,6 @@ class UserPolicy
      */
     public function admin(User $user): Response
     {
-        return $user->role === 'admin' ? Response::allow() : Response::deny('hanya admin yang dapat melakukan tindakan ini!');
+        return $user->role === 'admin' ? Response::allow() : Response::deny();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\JabatanResourceCollection;
 use App\Models\jabatan;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,8 +17,13 @@ class JabatanController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->filled('perPage');
+        $search = $request->filled('search');
 
-        return jabatan::paginate($perPage ? $request->perPage : 10)->toResourceCollection();
+        if ($search) {
+            return new JabatanResourceCollection(jabatan::search($request->search)->paginate($perPage ? $request->perPage : 10));
+        }
+
+        return new JabatanResourceCollection(jabatan::paginate($perPage ? $request->perPage : 10));
     }
 
     /**
@@ -27,12 +33,23 @@ class JabatanController extends Controller
     {
         Gate::authorize('admin', User::class);
 
-        $data = $request->validate([
-            'nama' => ['required', 'string', 'min:5', 'max:50'],
-            'kode' => ['required', 'string', 'min:1', 'max:5', Rule::unique('jabatan', 'kode')],
-        ]);
+        $data = $request->validate(
+            [
+                'nama' => ['required', 'string', 'min:5', 'max:50'],
+                'kode' => ['required', 'string', 'min:1', 'max:5', Rule::unique('jabatans', 'kode')],
+            ],
+            [
+                'nama.required' => 'nama tidak boleh kosong!.',
+                'nama.min' => 'nama minimal 5 karakter!.',
+                'nama.max' => 'nama maksimal 50 karakter!.',
+                'kode.required' => 'kode tidak boleh kosong!.',
+                'kode.min' => 'kode minimal 1 karakter!.',
+                'kode.max' => 'kode maksimal 5 karakter!.',
+                'kode.unique' => 'kode sudah digunakan, kode harus unik!.',
+            ]
+        );
 
-        return ['success' => jabatan::save(), 'created' => jabatan::create($data)];
+        return ['success' => true, 'created' => jabatan::create($data)];
     }
 
     /**
@@ -50,10 +67,18 @@ class JabatanController extends Controller
     {
         Gate::authorize('admin', User::class);
 
-        $data = $request->validate([
-            'nama' => ['string', 'min:5', 'max:50'],
-            'kode' => ['string', 'min:1', 'max:5', Rule::unique('jabatan', 'kode')],
-        ]);
+        $data = $request->validate(
+            [
+                'nama' => ['string', 'min:5', 'max:50'],
+                'kode' => ['string', 'min:1', 'max:5', Rule::unique('jabatans', 'kode')],
+            ],
+            [
+                'nama.min' => 'nama minimal 5 karakter!.',
+                'nama.max' => 'nama maksimal 50 karakter!.',
+                'kode.min' => 'kode minimal 1 karakter!.',
+                'kode.max' => 'kode maksimal 5 karakter!.',
+                'kode.unique' => 'kode sudah digunakan, kode harus unik!.',
+            ]);
 
         return ['success' => $jabatan->update($data), 'updated' => $jabatan->getChanges()];
     }

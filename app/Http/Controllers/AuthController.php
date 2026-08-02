@@ -10,10 +10,18 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $data = $request->validate([
-            'email' => ['required', 'string', 'min:10', 'max:50', 'email', 'exists:users,email'],
-            'password' => ['required', 'string'],
-        ]);
+        $request->validate(
+            [
+                'email' => ['required', 'string', 'min:10', 'max:50', 'email'],
+                'password' => ['required', 'string'],
+            ], 
+            [
+                'email.required' => 'email tidak boleh kosong!',
+                'email.email' => 'format email yang anda masukan salah!',
+                'email.min' => 'email minimal 10 karakter!',
+                'email.max' => 'email maksimal 50 karakter!',
+                'password.required' => 'password tidak boleh kosong'
+            ]);
 
         $user = User::where('email', $request->email)->first();
         $password = Hash::check($request->password, $user->password);
