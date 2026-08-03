@@ -63,10 +63,10 @@ Ikuti langkah-langkah berikut untuk menjalankan API ini di komputer lokal Anda:
     php artisan key:generate
     ```
 
-6. **Migrasi Database & Seeding (Opsional)**
+6. **Migrasi Database**
 
     ```bash
-    php artisan migrate --seed
+    php artisan migrate
     ```
 
 7. **Jalankan Server Lokal**
