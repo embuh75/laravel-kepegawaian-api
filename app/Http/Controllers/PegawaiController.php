@@ -55,28 +55,33 @@ class PegawaiController extends Controller
     {
         Gate::authorize('admin', User::class);
 
-        $data = $request->validate([
-            'nama' => ['required', 'string', 'min:10', 'max:150'],
-            'foto' => ['nullable', 'image', 'mimes:webp,png,jpg,jpeg', 'max:1048'],
-            'nomor_ktp' => ['required', 'string', 'min:16', 'max:16', Rule::unique('pegawais', 'nomor_ktp')],
-            'nomor_nbm' => ['nullable', 'string', 'min:10', 'max:20', Rule::unique('pegawais', 'nomor_nbm')],
-            'tempat_lahir' => ['required', 'string', 'max:100'],
-            'tanggal_lahir' => ['required', 'date_format:Y-m-d', 'before:today'],
-            'jenis_kelamin' => ['required', 'in:L,P'],
-            'status' => ['required', 'in:Belum_Menikah,Menikah,Duda'],
-            'alamat_rumah' => ['required', 'string', 'min:10'],
-            'nomor_telephone' => ['required', 'string', 'min:12', 'max:14', 'phone:ID'],
-            'alamat_email' => ['nullable', 'string', 'min:10', 'max:100', 'email', Rule::unique('pegawais', 'alamat_email')],
-            'pendidikan_terakhir' => ['nullable', 'string', 'min:2', 'max:5'],
-            'nama_kampus' => ['nullable', 'string', 'min:10', 'max:150'],
-            'jurusan' => ['nullable', 'string', 'min:10', 'max:150'],
-            'tahun_lulus' => ['nullable', 'date_format:Y'],
-            'jabatan_id' => ['exists:jabatans,id'],
-            'mapel_id' => ['nullable', 'exists:mata_pelajarans,id'],
-            'nomor_bpjs' => ['nullable', 'string', 'min:10', 'max:30', Rule::unique('pegawais', 'nomor_bpjs')],
-            'kontak_darurat' => ['nullable', 'string', 'min:12', 'max:14', 'phone:ID'],
-            'user_id' => ['nullable', 'exists:users,id'],
-        ]);
+        $data = $request->validate(
+            [
+                'nama' => ['required', 'string', 'min:10', 'max:150'],
+                'foto' => ['nullable', 'image', 'mimes:webp,png,jpg,jpeg', 'max:1048'],
+                'nomor_ktp' => ['required', 'string', 'min:16', 'max:16', Rule::unique('pegawais', 'nomor_ktp')],
+                'nomor_nbm' => ['nullable', 'string', 'min:10', 'max:20', Rule::unique('pegawais', 'nomor_nbm')],
+                'tempat_lahir' => ['required', 'string', 'max:100'],
+                'tanggal_lahir' => ['required', 'date_format:Y-m-d', 'before:today'],
+                'jenis_kelamin' => ['required', 'in:L,P'],
+                'status' => ['required', 'in:Belum_Menikah,Menikah,Duda'],
+                'alamat_rumah' => ['required', 'string', 'min:10'],
+                'nomor_telephone' => ['required', 'string', 'min:12', 'max:14', 'phone:ID'],
+                'alamat_email' => ['nullable', 'string', 'min:10', 'max:100', 'email', Rule::unique('pegawais', 'alamat_email')],
+                'pendidikan_terakhir' => ['nullable', 'string', 'min:2', 'max:5'],
+                'nama_kampus' => ['nullable', 'string', 'min:10', 'max:150'],
+                'jurusan' => ['nullable', 'string', 'min:10', 'max:150'],
+                'tahun_lulus' => ['nullable', 'date_format:Y'],
+                'jabatan_id' => ['exists:jabatans,id'],
+                'mapel_id' => ['nullable', 'exists:mata_pelajarans,id'],
+                'nomor_bpjs' => ['nullable', 'string', 'min:10', 'max:30', Rule::unique('pegawais', 'nomor_bpjs')],
+                'kontak_darurat' => ['nullable', 'string', 'min:12', 'max:14', 'phone:ID'],
+                'user_id' => ['nullable', 'exists:users,id'],
+            ],
+            [
+                //
+            ]
+        );
 
         if ($request->hasFile('foto')) {
             // format nama
@@ -113,29 +118,35 @@ class PegawaiController extends Controller
     {
         Gate::authorize('admin', User::class);
 
-        $data = $request->validate([
-            'nama' => ['required', 'string', 'min:10', 'max:150'],
-            'foto' => ['nullable', 'image', 'mimes:webp,png,jpg,jpeg', 'max:1048'],
-            'nomor_ktp' => ['required', 'string', 'min:20', 'max:20', Rule::unique('pegawais', 'nomor_ktp')->ignore($pegawai->id)],
-            'nomor_nbm' => ['nullable', 'string', 'min:10', 'max:20', Rule::unique('pegawais', 'nomor_nbm')->ignore($pegawai->id)],
-            'tempat_lahir' => ['required', 'string', 'min:10', 'max:100'],
-            'tanggal_lahir' => ['required', 'date_format:Y-m-d', 'before:today'],
-            'jenis_kelamin' => ['required', 'in:L,P'],
-            'status' => ['required', 'in:Belum_Menikah,Menikah,Duda'],
-            'alamat_rumah' => ['required', 'string', 'min:10'],
-            'nomor_telephone' => ['required', 'string', 'min:12', 'max:14', 'phone:ID'],
-            'alamat_email' => ['nullable', 'string', 'min:10', 'max:100', 'email', Rule::unique('pegawais', 'alamat_email')->ignore($pegawai->id)],
-            'pendidikan_terakhir' => ['nullable', 'string', 'min:2', 'max:5'],
-            'nama_kampus' => ['nullable', 'string', 'min:10', 'max:150'],
-            'jurusan' => ['nullable', 'string', 'min:10', 'max:150'],
-            'tahun_lulus' => ['nullable', 'date_format:Y'],
-            'jabatan_id' => ['exists:jabatans,id'],
-            'mapel_id' => ['nullable', 'exists:mata_pelajarans,id'],
-            'nomor_bpjs' => ['nullable', 'string', 'min:10', 'max:30', Rule::unique('pegawais', 'nomor_bpjs')->ignore($pegawai->id)],
-            'kontak_darurat' => ['nullable', 'string', 'min:12', 'max:14', 'phone:ID'],
-            'user_id' => ['nullable', 'exists:users,id'],
-        ]);
+        $data = $request->validate(
+            [
+                'nama' => ['required', 'string', 'min:10', 'max:150'],
+                'foto' => ['nullable', 'image', 'mimes:webp,png,jpg,jpeg', 'max:1048'],
+                'nomor_ktp' => ['required', 'string', 'min:20', 'max:20', Rule::unique('pegawais', 'nomor_ktp')->ignore($pegawai->id)],
+                'nomor_nbm' => ['nullable', 'string', 'min:10', 'max:20', Rule::unique('pegawais', 'nomor_nbm')->ignore($pegawai->id)],
+                'tempat_lahir' => ['required', 'string', 'min:10', 'max:100'],
+                'tanggal_lahir' => ['required', 'date_format:Y-m-d', 'before:today'],
+                'jenis_kelamin' => ['required', 'in:L,P'],
+                'status' => ['required', 'in:Belum_Menikah,Menikah,Duda'],
+                'alamat_rumah' => ['required', 'string', 'min:10'],
+                'nomor_telephone' => ['required', 'string', 'min:12', 'max:14', 'phone:ID'],
+                'alamat_email' => ['nullable', 'string', 'min:10', 'max:100', 'email', Rule::unique('pegawais', 'alamat_email')->ignore($pegawai->id)],
+                'pendidikan_terakhir' => ['nullable', 'string', 'min:2', 'max:5'],
+                'nama_kampus' => ['nullable', 'string', 'min:10', 'max:150'],
+                'jurusan' => ['nullable', 'string', 'min:10', 'max:150'],
+                'tahun_lulus' => ['nullable', 'date_format:Y'],
+                'jabatan_id' => ['exists:jabatans,id'],
+                'mapel_id' => ['nullable', 'exists:mata_pelajarans,id'],
+                'nomor_bpjs' => ['nullable', 'string', 'min:10', 'max:30', Rule::unique('pegawais', 'nomor_bpjs')->ignore($pegawai->id)],
+                'kontak_darurat' => ['nullable', 'string', 'min:12', 'max:14', 'phone:ID'],
+                'user_id' => ['nullable', 'exists:users,id'],
+            ],
+            [
+                //
+            ]
+        );
 
+        // handling file
         if ($request->hasFile('foto')) {
             $oldFoto = $pegawai->foto;
             $fotoExt = $request->file('foto')->getClientOriginalExtension();
@@ -158,9 +169,14 @@ class PegawaiController extends Controller
             $data['foto'] = $fileName;
         }
 
-        $success = $pegawai->update($data);
+        $pegawai->update($data);
+        $updated = $pegawai->getChanges();
 
-        return ['success' => $success, 'updated' => $pegawai->getChanges()];
+        if ($updated == null) {
+            return ['success' => false, 'message' => 'isi dulu kolom yang ingin diupdate'];
+        }
+
+        return ['success' => true, 'updated' => $updated];
     }
 
     /**

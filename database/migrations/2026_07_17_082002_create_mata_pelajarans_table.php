@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('mata_pelajarans', function (Blueprint $table) {
             $table->id();
-            $table->string('nama', 100);
-            $table->string('kode', 10)->unique();
+            $table->string('nama', 50);
+            $table->string('kode', 5)->unique();
         });
     }
 

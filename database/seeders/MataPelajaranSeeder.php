@@ -10,31 +10,25 @@ class MataPelajaranSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run(mata_pelajaran $mapel): void
     {
-        mata_pelajaran::create([
-            'nama' => 'Bimbingan Konseling',
-            'kode' => 'BK',
-        ]);
+        $data = [
+            ['nama' => 'Bahasa Arab', 'kode' => 'BAB'],
+            ['nama' => 'Bahasa Indonesia', 'kode' => 'BID'],
+            ['nama' => 'Matematika', 'kode' => 'MTK'],
+            ['nama' => 'Kimia', 'kode' => 'KIM'],
+            ['nama' => 'Fisika', 'kode' => 'FIS'],
+            ['nama' => 'Pendidikan Agama Islam', 'kode' => 'PAI'],
+            ['nama' => 'Biologi', 'kode' => 'BIO'],
+            ['nama' => 'Bimbingan Konseling', 'kode' => 'BK'],
+            ['nama' => 'Sejarah dan Pancasila', 'kode' => 'SP'],
+            ['nama' => 'Ekonomi', 'kode' => 'EKO'],
+            ['nama' => 'Geografi', 'kode' => 'GEO'],
+            ['nama' => 'Sosiologi', 'kode' => 'SO'],
+        ];
 
-        mata_pelajaran::create([
-            'nama' => 'Sejarah dan Pancasila',
-            'kode' => 'SP',
-        ]);
-
-        mata_pelajaran::create([
-            'nama' => 'Ekonomi',
-            'kode' => 'EKO',
-        ]);
-
-        mata_pelajaran::create([
-            'nama' => 'Geografi',
-            'kode' => 'GEO',
-        ]);
-
-        mata_pelajaran::create([
-            'nama' => 'Sosiologi',
-            'kode' => 'SOS',
-        ]);
+        foreach ($data as $mp) {
+            $mapel->create($mp);
+        }
     }
 }

@@ -81,9 +81,14 @@ class MataPelajaranController extends Controller
             ]
         );
 
-        $success = $mapel->update($data);
+        $mapel->update($data);
+        $updated = $mapel->getChanges();
 
-        return ['success' => $success, 'updated' => $mapel->getChanges()];
+        if($updated == null) {
+            return ['success' => false, 'message' => 'isi dulu kolom yang ingin diupdate'];
+        }
+
+        return ['success' => true, 'updated' => $updated];
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\jabatan;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class JabatanSeeder extends Seeder
@@ -11,11 +10,20 @@ class JabatanSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run(jabatan $jabatan): void
     {
-        jabatan::create(['nama' => 'Tenaga Kebersihan', 'kode' => 'TK']);
-        jabatan::create(['nama' => 'Tenaga Kebersihan dan Jaga Malam', 'kode' => 'TKJM']);
-        jabatan::create(['nama' => 'TBendahara', 'kode' => 'BHR']);
-        jabatan::create(['nama' => 'Tim Multimedia', 'kode' => 'TMM']);
+        $data = [
+            ['nama' => 'Wa Ka AIK', 'kode' => 'WKA'],
+            ['nama' => 'Guru', 'kode' => 'GR'],
+            ['nama' => 'Waka Sarana dan Prasarana', 'kode' => 'WSP'],
+            ['nama' => 'Kepala Sekolah', 'kode' => 'KS'],
+            ['nama' => 'Tenaga Kebersihan', 'kode' => 'TK'],
+            ['nama' => 'Tenaga Kebersihan dan Penjaga Malam', 'kode' => 'TKPM'],
+            ['nama' => 'Tim Multimedia', 'kode' => 'TMM'],
+        ];
+
+        foreach ($data as $jb) {
+            $jabatan->create($jb);
+        }
     }
 }

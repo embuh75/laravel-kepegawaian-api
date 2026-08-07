@@ -43,9 +43,9 @@ class UserController extends Controller
                 'password' => ['required', Password::min(8)->mixedCase()->numbers()],
             ],
             [
-                'nama.required' => 'nama tidak boleh kosong!.',
-                'nama.min' => 'nama minimal 5 karakter!.',
-                'nama.max' => 'nama maksimal 50 karakter!.',
+                'name.required' => 'nama tidak boleh kosong!.',
+                'name.min' => 'nama minimal 5 karakter!.',
+                'name.max' => 'nama maksimal 50 karakter!.',
                 'role.required' => 'role tidak boleh kosong!.',
                 'role.in' => 'role input salah!, isi dengan admin/user.',
                 'email.required' => 'email tidak boleh kosong!',
@@ -87,9 +87,9 @@ class UserController extends Controller
                 'password' => ['required', Password::min(8)->mixedCase()->numbers()],
             ],
             [
-                'nama.required' => 'nama tidak boleh kosong!.',
-                'nama.min' => 'nama minimal 5 karakter!.',
-                'nama.max' => 'nama maksimal 50 karakter!.',
+                'name.required' => 'nama tidak boleh kosong!.',
+                'name.min' => 'nama minimal 5 karakter!.',
+                'name.max' => 'nama maksimal 50 karakter!.',
                 'role.required' => 'role tidak boleh kosong!.',
                 'role.in' => 'role input salah!, isi dengan admin/user.',
                 'email.required' => 'email tidak boleh kosong!',
@@ -101,9 +101,14 @@ class UserController extends Controller
             ]
         );
 
-        $success = $user->update($data);
+        $user->update($data);
+        $updated = $user->getChanges();
 
-        return ['success' => $success, 'message' => 'Data user berhasil diperbarui!'];
+        if($updated == null) {
+            return ['success' => false, 'message' => 'isi dulu kolom yang ingin diupdate'];
+        }
+
+        return ['success' => true, 'updated' => $updated];
     }
 
     /**

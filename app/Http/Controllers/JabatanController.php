@@ -35,7 +35,7 @@ class JabatanController extends Controller
 
         $data = $request->validate(
             [
-                'nama' => ['required', 'string', 'min:5', 'max:50'],
+                'nama' => ['required', 'string', 'min:1', 'max:50'],
                 'kode' => ['required', 'string', 'min:1', 'max:5', Rule::unique('jabatans', 'kode')],
             ],
             [
@@ -69,7 +69,7 @@ class JabatanController extends Controller
 
         $data = $request->validate(
             [
-                'nama' => ['string', 'min:5', 'max:50'],
+                'nama' => ['string', 'min:1', 'max:50'],
                 'kode' => ['string', 'min:1', 'max:5', Rule::unique('jabatans', 'kode')],
             ],
             [
@@ -80,7 +80,14 @@ class JabatanController extends Controller
                 'kode.unique' => 'kode sudah digunakan, kode harus unik!.',
             ]);
 
-        return ['success' => $jabatan->update($data), 'updated' => $jabatan->getChanges()];
+        $jabatan->update($data);
+        $updated = $jabatan->getChanges();
+
+        if ($updated == null) {
+            return ['success' => false, 'message' => 'isi dulu kolom yang ingin diupdate'];
+        }
+
+        return ['success' => true, 'updated' => $updated];
     }
 
     /**

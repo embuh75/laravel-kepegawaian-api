@@ -28,11 +28,11 @@ return new class extends Migration
             $table->string('nama_kampus', 150)->nullable();
             $table->string('jurusan', 150)->nullable();
             $table->year('tahun_lulus')->nullable();
-            $table->foreignId('jabatan_id')->constrained('jabatans')->onDelete('cascade');
-            $table->foreignId('mapel_id')->nullable()->constrained('mata_pelajarans')->onDelete('cascade');
+            $table->foreignId('jabatan_id')->constrained('jabatans');
+            $table->foreignId('mapel_id')->nullable()->constrained('mata_pelajarans');
             $table->string('nomor_bpjs', 30)->nullable()->unique();
             $table->string('kontak_darurat', 20)->nullable();
-            $table->foreignId('user_id')->nullable()->unique()->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->unique()->constrained('users');
             $table->fullText(['nama']);
             $table->timestamps();
         });

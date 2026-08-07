@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Pegawai;
 use Illuminate\Database\Seeder;
 
 class PegawaiSeeder extends Seeder
@@ -12,6 +11,6 @@ class PegawaiSeeder extends Seeder
      */
     public function run(): void
     {
-        Pegawai::factory(19)->create();
+        //
     }
 }
