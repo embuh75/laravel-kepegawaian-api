@@ -6,6 +6,7 @@ use App\Http\Resources\PegawaiResourceCollection;
 use App\Models\pegawai;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Session\Store;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -60,7 +61,7 @@ class PegawaiController extends Controller
                 'nama' => ['required', 'string', 'min:10', 'max:150'],
                 'foto' => ['nullable', 'image', 'mimes:webp,png,jpg,jpeg', 'max:1048'],
                 'nomor_ktp' => ['required', 'string', 'min:16', 'max:16', Rule::unique('pegawais', 'nomor_ktp')],
-                'nomor_nbm' => ['nullable', 'string', 'min:10', 'max:20', Rule::unique('pegawais', 'nomor_nbm')],
+                'nomor_nbm' => ['nullable', 'string', 'min:5', 'max:20', Rule::unique('pegawais', 'nomor_nbm')],
                 'tempat_lahir' => ['required', 'string', 'max:100'],
                 'tanggal_lahir' => ['required', 'date_format:Y-m-d', 'before:today'],
                 'jenis_kelamin' => ['required', 'in:L,P'],
@@ -70,32 +71,34 @@ class PegawaiController extends Controller
                 'alamat_email' => ['nullable', 'string', 'min:10', 'max:100', 'email', Rule::unique('pegawais', 'alamat_email')],
                 'pendidikan_terakhir' => ['nullable', 'string', 'min:2', 'max:5'],
                 'nama_kampus' => ['nullable', 'string', 'min:10', 'max:150'],
-                'jurusan' => ['nullable', 'string', 'min:10', 'max:150'],
+                'jurusan' => ['nullable', 'string', 'min:5', 'max:150'],
                 'tahun_lulus' => ['nullable', 'date_format:Y'],
                 'jabatan_id' => ['exists:jabatans,id'],
                 'mapel_id' => ['nullable', 'exists:mata_pelajarans,id'],
-                'nomor_bpjs' => ['nullable', 'string', 'min:10', 'max:30', Rule::unique('pegawais', 'nomor_bpjs')],
+                'nomor_bpjs' => ['nullable', 'string', 'min:8', 'max:30', Rule::unique('pegawais', 'nomor_bpjs')],
                 'kontak_darurat' => ['nullable', 'string', 'min:12', 'max:14', 'phone:ID'],
                 'user_id' => ['nullable', 'exists:users,id'],
             ],
             [
-                //
+                'jenis_kelamin.in' => ':attribute yang dipilih tidak valid, isi dengan: L/P.',
+                'tanggal_lahir.date_format' => ':attribute harus berformat :format (contoh: 2001-09-03).',
+                'status.in' => ':attribute yang dipilih tidak valid, isi dengan: Belum_Menikah/Menikah/Duda.',
             ]
         );
 
         if ($request->hasFile('foto')) {
             // format nama
-            $timestamp = now()->getTimestampMs();
             $random = rand(10000000, 999999999);
+            $timestamp = now()->getTimestampMs();
             $fileExt = $request->file('foto')->getClientOriginalExtension();
-            $fileName = "IMG_{$random}_{$timestamp}.{$fileExt}";
 
             // storage
-            $request->file('foto')->storeAs('upload', $fileName, 'public');
+            $request->file('foto')->storeAs('upload', "IMG_{$random}_{$timestamp}.{$fileExt}", 'public');
 
-            $data['foto'] = $fileName;
+            $data['foto'] = "IMG_{$random}_{$timestamp}";
         }
 
+        // $result = $pegawai->with(['jabatan', 'mata_pelajaran'])->create($data);
         $result = $pegawai->create($data);
 
         return ['success' => true, 'created' => $result];
@@ -120,55 +123,66 @@ class PegawaiController extends Controller
 
         $data = $request->validate(
             [
-                'nama' => ['required', 'string', 'min:10', 'max:150'],
+                'nama' => ['string', 'min:10', 'max:150'],
                 'foto' => ['nullable', 'image', 'mimes:webp,png,jpg,jpeg', 'max:1048'],
-                'nomor_ktp' => ['required', 'string', 'min:20', 'max:20', Rule::unique('pegawais', 'nomor_ktp')->ignore($pegawai->id)],
-                'nomor_nbm' => ['nullable', 'string', 'min:10', 'max:20', Rule::unique('pegawais', 'nomor_nbm')->ignore($pegawai->id)],
-                'tempat_lahir' => ['required', 'string', 'min:10', 'max:100'],
-                'tanggal_lahir' => ['required', 'date_format:Y-m-d', 'before:today'],
-                'jenis_kelamin' => ['required', 'in:L,P'],
-                'status' => ['required', 'in:Belum_Menikah,Menikah,Duda'],
-                'alamat_rumah' => ['required', 'string', 'min:10'],
-                'nomor_telephone' => ['required', 'string', 'min:12', 'max:14', 'phone:ID'],
-                'alamat_email' => ['nullable', 'string', 'min:10', 'max:100', 'email', Rule::unique('pegawais', 'alamat_email')->ignore($pegawai->id)],
+                'nomor_ktp' => ['string', 'min:16', 'max:16', Rule::unique('pegawais', 'nomor_ktp')],
+                'nomor_nbm' => ['nullable', 'string', 'min:5', 'max:20', Rule::unique('pegawais', 'nomor_nbm')],
+                'tempat_lahir' => ['string', 'max:100'],
+                'tanggal_lahir' => ['date_format:Y-m-d', 'before:today'],
+                'jenis_kelamin' => ['in:L,P'],
+                'status' => ['in:Belum_Menikah,Menikah,Duda'],
+                'alamat_rumah' => ['string', 'min:10'],
+                'nomor_telephone' => ['string', 'min:12', 'max:14', 'phone:ID'],
+                'alamat_email' => ['nullable', 'string', 'min:10', 'max:100', 'email', Rule::unique('pegawais', 'alamat_email')],
                 'pendidikan_terakhir' => ['nullable', 'string', 'min:2', 'max:5'],
                 'nama_kampus' => ['nullable', 'string', 'min:10', 'max:150'],
-                'jurusan' => ['nullable', 'string', 'min:10', 'max:150'],
+                'jurusan' => ['nullable', 'string', 'min:5', 'max:150'],
                 'tahun_lulus' => ['nullable', 'date_format:Y'],
                 'jabatan_id' => ['exists:jabatans,id'],
                 'mapel_id' => ['nullable', 'exists:mata_pelajarans,id'],
-                'nomor_bpjs' => ['nullable', 'string', 'min:10', 'max:30', Rule::unique('pegawais', 'nomor_bpjs')->ignore($pegawai->id)],
+                'nomor_bpjs' => ['nullable', 'string', 'min:8', 'max:30', Rule::unique('pegawais', 'nomor_bpjs')],
                 'kontak_darurat' => ['nullable', 'string', 'min:12', 'max:14', 'phone:ID'],
                 'user_id' => ['nullable', 'exists:users,id'],
             ],
             [
-                //
+                'jenis_kelamin.in' => ':attribute yang dipilih tidak valid, isi dengan: L/P.',
+                'tanggal_lahir.date_format' => ':attribute harus berformat :format (contoh: 2001-09-03).',
+                'status.in' => ':attribute yang dipilih tidak valid, isi dengan: Belum_Menikah/Menikah/Duda.',
             ]
         );
 
         // handling file
         if ($request->hasFile('foto')) {
             $oldFoto = $pegawai->foto;
-            $fotoExt = $request->file('foto')->getClientOriginalExtension();
-            $fotoName = explode('.', $oldFoto);
+            $data['foto'] = $oldFoto;
 
-            if ($oldFoto && $fotoExt === $fotoName[1]) {
-                $fileName = $oldFoto;
-            } else {
-                $oldFotoFile = Storage::disk('public')->exists("upload/{$oldFoto}");
+            // jika belum punya foto
+            if (! $oldFoto) {
+                // format nama
+                $random = rand(10000000, 999999999);
+                $timestamp = now()->getTimestampMs();
 
-                if ($oldFoto && $oldFotoFile) {
-                    Storage::disk('public')->delete("upload/{$oldFoto}");
-                }
-
-                $fileName = "{$fotoName[0]}.{$fotoExt}";
+                $data['foto'] = "IMG_{$random}_{$timestamp}";
             }
 
-            $request->file('foto')->storeAs('upload', $fileName, 'public');
+            // jika udah punya foto
+            $storage = Storage::disk('public')->files('upload');
 
-            $data['foto'] = $fileName;
+            $findFile = collect($storage)->first(function ($path) use ($oldFoto) {
+                return pathinfo($path, PATHINFO_BASENAME) === $oldFoto;
+            });
+
+            // hapus foto lama jika ada
+            if ($findFile) {
+                Storage::disk('public')->delete($findFile);
+            }
+
+            // simpan foto
+            $fileExt = $request->file('foto')->getClientOriginalExtension();
+            $request->file('foto')->storeAs('upload', "{$data['foto']}.{$fileExt}", 'public');
         }
 
+        // $pegawai->with(['jabatan', 'mata_pelajaran'])->update($data);
         $pegawai->update($data);
         $updated = $pegawai->getChanges();
 

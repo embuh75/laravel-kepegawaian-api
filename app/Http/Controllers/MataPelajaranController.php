@@ -38,15 +38,6 @@ class MataPelajaranController extends Controller
                 'nama' => ['required', 'string', 'min:5', 'max:50'],
                 'kode' => ['required', 'string', 'min:1', 'max:5', Rule::unique('mata_pelajarans', 'kode')],
             ],
-            [
-                'nama.required' => 'nama tidak boleh kosong!.',
-                'nama.min' => 'nama minimal 5 karakter!.',
-                'nama.max' => 'nama maksimal 50 karakter!.',
-                'kode.required' => 'kode tidak boleh kosong!.',
-                'kode.min' => 'kode minimal 1 karakter!.',
-                'kode.max' => 'kode maksimal 5 karakter!.',
-                'kode.unique' => 'kode sudah digunakan, kode harus unik!.',
-            ]
         );
 
         return ['success' => true, 'created' => mata_pelajaran::create($data)];
@@ -67,24 +58,17 @@ class MataPelajaranController extends Controller
     {
         Gate::authorize('admin', User::class);
 
-        $data = $request->validate(
+        $request->validate(
             [
                 'nama' => ['string', 'min:5', 'max:50'],
                 'kode' => ['string', 'min:1', 'max:5', Rule::unique('mata_pelajarans', 'kode')],
             ],
-            [
-                'nama.min' => 'nama minimal 5 karakter!.',
-                'nama.max' => 'nama maksimal 50 karakter!.',
-                'kode.min' => 'kode minimal 1 karakter!.',
-                'kode.max' => 'kode maksimal 5 karakter!.',
-                'kode.unique' => 'kode sudah digunakan, kode harus unik!.',
-            ]
         );
 
-        $mapel->update($data);
+        $mapel->update($request);
         $updated = $mapel->getChanges();
 
-        if($updated == null) {
+        if ($updated == null) {
             return ['success' => false, 'message' => 'isi dulu kolom yang ingin diupdate'];
         }
 

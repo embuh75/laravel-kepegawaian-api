@@ -22,7 +22,7 @@ Route::middleware(['throttle:api'])->prefix('v1')->group(function () {
         Route::apiResource('mapel', MataPelajaranController::class);
         Route::apiResource('pegawai', PegawaiController::class);
     });
-    
+
     Route::get('/', function () {
         date_default_timezone_set('Asia/Jakarta');
 

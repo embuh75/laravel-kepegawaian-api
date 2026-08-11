@@ -15,17 +15,21 @@ class PegawaiResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $photo = Storage::disk('public')->exists("upload/{$this->foto}");
-        $url = null;
+        $storage = Storage::disk('public')->files('upload');
+        $foto = $this->foto;
 
-        if ($this->foto && $photo) {
-            $url = url(Storage::temporaryUrl("upload/{$this->foto}", now()->plus(minutes: 5)));
+        $file = collect($storage)->first(function ($path) use ($foto) {
+            return pathinfo($path, PATHINFO_FILENAME) === $foto;
+        });
+
+        if ($foto && $file) {
+            $foto = url(Storage::temporaryUrl("{$file}", now()->plus(minutes: 5)));
         }
 
         return [
             'id' => $this->id,
             'nama' => $this->nama,
-            'foto' => $url,
+            'foto' => $foto,
             'nomor_ktp' => $this->nomor_ktp,
             'nomor_nbm' => $this->nomor_nbm,
             'tempat_lahir' => $this->tempat_lahir,
