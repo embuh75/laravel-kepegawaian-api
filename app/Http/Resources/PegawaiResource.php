@@ -47,7 +47,6 @@ class PegawaiResource extends JsonResource
             'mata_pelajaran' => new Mata_PelajaranResource($this->whenLoaded('mata_pelajaran')),
             'nomor_bpjs' => $this->nomor_bpjs,
             'kontak_darurat' => $this->kontak_darurat,
-            'user_id' => $this->user_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

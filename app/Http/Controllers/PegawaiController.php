@@ -77,7 +77,6 @@ class PegawaiController extends Controller
                 'mapel_id' => ['nullable', 'exists:mata_pelajarans,id'],
                 'nomor_bpjs' => ['nullable', 'string', 'min:8', 'max:30', Rule::unique('pegawais', 'nomor_bpjs')],
                 'kontak_darurat' => ['nullable', 'string', 'min:12', 'max:14', 'phone:ID'],
-                'user_id' => ['nullable', 'exists:users,id'],
             ],
             [
                 'jenis_kelamin.in' => ':attribute yang dipilih tidak valid, isi dengan: L/P.',
@@ -142,7 +141,6 @@ class PegawaiController extends Controller
                 'mapel_id' => ['nullable', 'exists:mata_pelajarans,id'],
                 'nomor_bpjs' => ['nullable', 'string', 'min:8', 'max:30', Rule::unique('pegawais', 'nomor_bpjs')],
                 'kontak_darurat' => ['nullable', 'string', 'min:12', 'max:14', 'phone:ID'],
-                'user_id' => ['nullable', 'exists:users,id'],
             ],
             [
                 'jenis_kelamin.in' => ':attribute yang dipilih tidak valid, isi dengan: L/P.',

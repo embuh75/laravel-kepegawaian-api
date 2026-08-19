@@ -36,7 +36,6 @@ class pegawai extends Model
         'mapel_id',
         'nomor_bpjs',
         'kontak_darurat',
-        'user_id',
     ];
 
     protected function casts(): array
@@ -46,7 +45,6 @@ class pegawai extends Model
             'tahun_lulus' => 'integer',
             'jabatan_id' => 'integer',
             'mapel_id' => 'integer',
-            'user_id' => 'integer',
         ];
     }
 
