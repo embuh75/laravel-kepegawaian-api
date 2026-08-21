@@ -28,7 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/v1/auth/logout')) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Login dulu baru logout, kocak!.',
+                    'message' => 'Logout gagal, token tidak valid atau belum login.',
                 ], 401);
             }
         });
